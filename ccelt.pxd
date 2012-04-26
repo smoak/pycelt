@@ -14,6 +14,7 @@ cdef extern from *:
 cdef extern from "celt_types.h":
     ctypedef celt_int16* const_celt_int16_ptr "const celt_int16*"
 
+
 cdef extern from "celt.h":
 
     ctypedef struct CELTEncoder:
@@ -56,3 +57,20 @@ cdef extern from "celt.h":
     int celt_decode(CELTDecoder *st, const_unsigned_char_ptr data, int len, celt_int16 *pcm, int frame_size)
     int celt_decoder_ctl(CELTDecoder * st, int request, ...)
     const_char_ptr celt_strerror(int error) # same as const char* celt_strerror(int error) See http://wiki.cython.org/FAQ#HowdoIuse.27const.27.3F
+
+cdef extern from "celt_header.h":
+    ctypedef struct CELTHeader:
+        char codec_id[8]
+        char codec_version[20]
+        celt_int32 version_id
+        celt_int32 header_size
+        celt_int32 sample_rate
+        celt_int32 nb_channels
+        celt_int32 frame_size
+        celt_int32 overlap
+        celt_int32 bytes_per_packet
+        celt_int32 extra_headers
+
+    int celt_header_init(CELTHeader *header, const_CELTMode_ptr m, int frame_size, int channels)
+    int celt_header_to_packet(CELTHeader *header, unsigned char *packet, celt_uint32 size)
+    int celt_header_from_packet(unsigned char *packet, celt_uint32 size, CELTHeader *header)
